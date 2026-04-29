@@ -653,16 +653,15 @@ canvas#bg3{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
       <div class="b-dot"></div><div class="b-dot"></div><div class="b-dot"></div>
       <span class="b-ptxt">ENTITY DISSOLVING</span>
     </div>
-<div class="b-form">
-  <!-- target="_blank" opens the success message in a NEW tab so your site stays alive -->
-  <form action="https://api.web3forms.com/submit" method="POST" target="_blank">
+    <div class="b-form">
+  <!-- The invisible box that stops the black screen -->
+  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+  
+  <!-- The form sends the email silently, then triggers your exact bindIt() animation -->
+  <form action="https://api.web3forms.com/submit" method="POST" target="hidden_iframe" onsubmit="setTimeout(bindIt, 100);">
     <input type="hidden" name="access_key" value="50d8b03c-3480-46a0-8e15-c8d61edb7af7">
     
-    <!-- This tells Web3Forms NOT to show their generic page, but just a simple success message -->
-    <input type="hidden" name="from_name" value="The Archive">
-    <input type="hidden" name="subject" value="New Entity Bound">
-
-    <input class="b-inp" type="email" name="email" placeholder="your@email.com" required />
+    <input class="b-inp" type="email" name="email" id="email-in" placeholder="your@email.com" required />
     <button class="b-btn" type="submit">BIND</button>
   </form>
 </div>
