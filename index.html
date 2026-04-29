@@ -654,9 +654,12 @@ canvas#bg3{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
       <span class="b-ptxt">ENTITY DISSOLVING</span>
     </div>
 <div class="b-form">
-  <input class="b-inp" type="email" id="email-in" placeholder="your@email.com" />
-  <button class="b-btn" onclick="bindIt()">BIND</button>
-</div>
+<form id="bind-form" action="[https://api.web3forms.com/submit](https://api.web3forms.com/submit)" method="POST">
+    <input type="hidden" name="access_key" value="50d8b03c-3480-46a0-8e15-c8d61edb7af7">
+    <input class="b-inp" type="email" name="email" id="email-in" placeholder="your@email.com" required />
+    <button class="b-btn" type="submit">BIND</button>
+  </form>
+</div>      
 </div>
 <div id="bound" style="display:none;">
 </div>
@@ -2305,15 +2308,7 @@ function startDissolution(){
   buildDisThreads(); disActive=true; disT=0;
   disCv.style.opacity='1';
   // --- SURGICAL FIX 2: SPEED FIX (Changed from 900 to 200) ---
-  setTimeout(()=>{
-    document.getElementById('bind').classList.add('show');
-    // Allow Enter key to trigger bind
-    var inp = document.getElementById('email-in');
-    if(inp && !inp._bindKeySet){
-      inp._bindKeySet = true;
-      inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); bindIt(); } });
-    }
-  }, 200);
+  setTimeout(()=>document.getElementById('bind').classList.add('show'), 200);
 }
 
 /* ═══ BIND ═══ */
@@ -2328,16 +2323,6 @@ function bindIt(){
     setTimeout(() => { inp.style.borderColor = ''; inp.style.animation = ''; }, 1200);
     return;
   }
-  // Submit to Web3Forms silently in the background — no redirect, no new page
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      access_key: '50d8b03c-3480-46a0-8e15-c8d61edb7af7',
-      email: email,
-      subject: 'New Waeryn Binding'
-    })
-  }).catch(function(){}); // silent — flow never waits for or depends on this
   _bindDone = true;
   document.getElementById('bind').style.opacity = '0';
   document.getElementById('bind').style.pointerEvents = 'none';
@@ -3546,6 +3531,36 @@ function buildBoundSigil(cv, hexColor, charIdx){
 
   frame();
 }
+</script>
+<script>
+  const bindForm = document.getElementById('bind-form');
+  const bindContainer = document.getElementById('bind');
+  const boundSection = document.getElementById('bound');
+
+  if (bindForm) {
+    bindForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Stops the annoying redirect
+
+      const formData = new FormData(bindForm);
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        // SUCCESS: Hide the unbound UI and show the bound UI
+        bindContainer.style.display = 'none';
+        boundSection.style.display = 'block';
+        boundSection.innerHTML = '<div class="b-eye" style="color: #00ff00;">· ENTITY BOUND ·</div><div class="b-head">Archive Secured.<br>The Soul is preserved.</div>';
+      })
+      .catch(error => {
+        // EMERGENCY FALLBACK: Just show the success anyway so the user isn't stuck
+        bindContainer.style.display = 'none';
+        boundSection.style.display = 'block';
+        boundSection.innerHTML = '<div>Connection unstable, but the Bind held.</div>';
+      });
+    });
+  }
 </script>
 </body>
 </html>
