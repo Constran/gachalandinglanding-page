@@ -654,13 +654,9 @@ canvas#bg3{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
       <span class="b-ptxt">ENTITY DISSOLVING</span>
     </div>
 <div class="b-form">
-  <form id="bind-form" onsubmit="handleBindSubmit(event)">
-    <input type="hidden" name="access_key" value="50d8b03c-3480-46a0-8e15-c8d61edb7af7">
-    <input type="hidden" name="name" value="Waeryn Subscriber">
-    <input class="b-inp" type="email" name="email" id="email-in" placeholder="your@email.com" required />
-    <button class="b-btn" type="submit">BIND</button>
-  </form>
-</div>   
+  <input class="b-inp" type="email" id="email-in" placeholder="your@email.com" />
+  <button class="b-btn" onclick="bindIt()">BIND</button>
+</div>
 </div>
 <div id="bound" style="display:none;">
 </div>
@@ -2309,7 +2305,15 @@ function startDissolution(){
   buildDisThreads(); disActive=true; disT=0;
   disCv.style.opacity='1';
   // --- SURGICAL FIX 2: SPEED FIX (Changed from 900 to 200) ---
-  setTimeout(()=>document.getElementById('bind').classList.add('show'), 200);
+  setTimeout(()=>{
+    document.getElementById('bind').classList.add('show');
+    // Allow Enter key to trigger bind
+    var inp = document.getElementById('email-in');
+    if(inp && !inp._bindKeySet){
+      inp._bindKeySet = true;
+      inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); bindIt(); } });
+    }
+  }, 200);
 }
 
 /* ═══ BIND ═══ */
@@ -2324,6 +2328,16 @@ function bindIt(){
     setTimeout(() => { inp.style.borderColor = ''; inp.style.animation = ''; }, 1200);
     return;
   }
+  // Submit to Web3Forms silently in the background — no redirect, no new page
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: '50d8b03c-3480-46a0-8e15-c8d61edb7af7',
+      email: email,
+      subject: 'New Waeryn Binding'
+    })
+  }).catch(function(){}); // silent — flow never waits for or depends on this
   _bindDone = true;
   document.getElementById('bind').style.opacity = '0';
   document.getElementById('bind').style.pointerEvents = 'none';
@@ -2623,12 +2637,6 @@ window.addEventListener('resize',()=>{
   // Expose functions used in HTML onclick attributes
   window.startSummon = startSummon;
   window.bindIt = bindIt;
-  window.handleBindSubmit = function(e){
-    e.preventDefault();
-    var fd = new FormData(e.target);
-    fetch("https://api.web3forms.com/submit", {method:"POST", body:fd});
-    bindIt();
-  };
   window.dismissPopup = function(){
     // Store the pulled character's index so Page 3 knows which one to unlock
     if(typeof currentChar !== 'undefined' && currentChar !== null){
