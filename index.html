@@ -654,7 +654,7 @@ canvas#bg3{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
       <span class="b-ptxt">ENTITY DISSOLVING</span>
     </div>
 <div class="b-form">
-  <form action="https://api.web3forms.com/submit" method="POST">
+  <form id="bind-form" onsubmit="handleBindSubmit(event)">
     <input type="hidden" name="access_key" value="50d8b03c-3480-46a0-8e15-c8d61edb7af7">
     <input type="hidden" name="name" value="Waeryn Subscriber">
     <input class="b-inp" type="email" name="email" id="email-in" placeholder="your@email.com" required />
@@ -2623,6 +2623,12 @@ window.addEventListener('resize',()=>{
   // Expose functions used in HTML onclick attributes
   window.startSummon = startSummon;
   window.bindIt = bindIt;
+  window.handleBindSubmit = function(e){
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    fetch("https://api.web3forms.com/submit", {method:"POST", body:fd});
+    bindIt();
+  };
   window.dismissPopup = function(){
     // Store the pulled character's index so Page 3 knows which one to unlock
     if(typeof currentChar !== 'undefined' && currentChar !== null){
