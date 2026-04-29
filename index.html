@@ -1235,12 +1235,6 @@ function sigilClick(){
   if(_curPage === 0){ showPage(_bindDone ? 2 : 1); }
   else if(_curPage === 1 && _bindDone){ showPage(2); }
 }
-
-// Keyboard
-document.addEventListener('keydown', function(e){
-  if(e.key==='ArrowDown'||e.key==='PageDown') showPage(Math.min(_curPage+1,2));
-  if(e.key==='ArrowUp'  ||e.key==='PageUp'  ) showPage(Math.max(_curPage-1,0));
-});
 </script>
 <script>
 (function(){
