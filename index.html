@@ -654,12 +654,20 @@ canvas#bg3{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
       <span class="b-ptxt">ENTITY DISSOLVING</span>
     </div>
 <div class="b-form">
-<form id="bind-form" action="[https://api.web3forms.com/submit](https://api.web3forms.com/submit)" method="POST">
+  <!-- target="_blank" opens the success message in a NEW tab so your site stays alive -->
+  <form action="https://api.web3forms.com/submit" method="POST" target="_blank">
     <input type="hidden" name="access_key" value="50d8b03c-3480-46a0-8e15-c8d61edb7af7">
-    <input class="b-inp" type="email" name="email" id="email-in" placeholder="your@email.com" required />
+    
+    <!-- This tells Web3Forms NOT to show their generic page, but just a simple success message -->
+    <input type="hidden" name="from_name" value="The Archive">
+    <input type="hidden" name="subject" value="New Entity Bound">
+
+    <input class="b-inp" type="email" name="email" placeholder="your@email.com" required />
     <button class="b-btn" type="submit">BIND</button>
   </form>
-</div>      
+</div>
+    <div class="b-disc">No noise. First to enter when the world opens.</div>
+  </div>
 </div>
 <div id="bound" style="display:none;">
 </div>
@@ -3531,36 +3539,6 @@ function buildBoundSigil(cv, hexColor, charIdx){
 
   frame();
 }
-</script>
-<script>
-  const bindForm = document.getElementById('bind-form');
-  const bindContainer = document.getElementById('bind');
-  const boundSection = document.getElementById('bound');
-
-  if (bindForm) {
-    bindForm.addEventListener('submit', function(e) {
-      e.preventDefault(); // Stops the annoying redirect
-
-      const formData = new FormData(bindForm);
-
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        // SUCCESS: Hide the unbound UI and show the bound UI
-        bindContainer.style.display = 'none';
-        boundSection.style.display = 'block';
-        boundSection.innerHTML = '<div class="b-eye" style="color: #00ff00;">· ENTITY BOUND ·</div><div class="b-head">Archive Secured.<br>The Soul is preserved.</div>';
-      })
-      .catch(error => {
-        // EMERGENCY FALLBACK: Just show the success anyway so the user isn't stuck
-        bindContainer.style.display = 'none';
-        boundSection.style.display = 'block';
-        boundSection.innerHTML = '<div>Connection unstable, but the Bind held.</div>';
-      });
-    });
-  }
 </script>
 </body>
 </html>
